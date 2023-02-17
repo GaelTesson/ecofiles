@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import "./styles.css";
+import { Dropzone, FileItem, FullScreenPreview } from "@dropzone-ui/react";
+import { useState } from "react";
+export default function App() {
+  const [files, setFiles] = useState([]);
+  const [imageSrc, setImageSrc] = useState(undefined);
+  const updateFiles = (incommingFiles) => {
+    console.log("incomming files", incommingFiles);
+    setFiles(incommingFiles);
+  };
+  const onDelete = (id) => {
+    setFiles(files.filter((x) => x.id !== id));
+  };
+  const handleSee = (imageSource) => {
+    setImageSrc(imageSource);
+  };
+  const handleClean = (files) => {
+    console.log("list cleaned", files);
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Dropzone
+        style={{ minWidth: "550px" }}
+        //view={"list"}
+        onChange={updateFiles}
+        minHeight="195px"
+        onClean={handleClean}
+        value={files}
+        maxFiles={5}
+        //header={false}
+        // footer={false}
+        maxFileSize={2998000}
+        //label="Drag'n drop files here or click to browse"
+        //label="Suleta tus archivos aquí"
+        accept=".png,image/*"
+        // uploadingMessage={"Uploading..."}
+        url="https://my-awsome-server/upload-my-file"
+        //of course this url doens´t work, is only to make upload button visible
+        //uploadOnDrop
+        //clickable={false}
+        fakeUploading
+        //localization={"FR-fr"}
+        disableScroll
+      >
+        {files.length > 0 &&
+          files.map((file) => (
+            <FileItem
+              {...file}
+              key={file.id}
+              onDelete={onDelete}
+              onSee={handleSee}
+              //localization={"ES-es"}
+              resultOnTooltip
+              preview
+              info
+              hd
+            />
+          ))}
+      </Dropzone>
+      <FullScreenPreview
+        imgSource={imageSrc}
+        openImage={imageSrc}
+        onClose={(e) => handleSee(undefined)}
+      />
+    </>
   );
 }
-
-export default App;
